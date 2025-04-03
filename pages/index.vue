@@ -8,15 +8,7 @@
           </div>
           <h1 class="text-lg font-semibold">MrM3hran</h1>
         </div>
-        <div class="relative inline-block">
-          <div class="absolute inset-0 bg-gradient-to-r from-purple-400 to-indigo-400 opacity-40 rounded-full backdrop-filter backdrop-blur-md"></div>
-          <button
-            @click="goToLogin"
-            class="relative text-sm md:text-base px-4 py-2 rounded-full transition shadow-lg hover:shadow-xl cursor-pointer text-gray-300 hover:text-indigo-300"
-          >
-            Sign in
-          </button>
-        </div>
+        
       </header>
   
       <!-- بخش مرکزی -->
@@ -37,7 +29,7 @@
           <!-- دکمه Try Free Trial با افکت شیشه‌ای -->
           <div class="relative inline-block">
             <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-cyan-400 opacity-40 rounded-full backdrop-filter backdrop-blur-md"></div>
-            <button class="relative px-6 py-3 bg-accent-green text-dark-bg font-semibold rounded-full hover:bg-green-400 transition shadow-lg hover:shadow-xl cursor-pointer">
+            <button @click="goToLogin" class="relative px-6 py-3 bg-accent-green text-dark-bg font-semibold rounded-full hover:bg-green-400 transition shadow-lg hover:shadow-xl cursor-pointer">
               Try Free Trial →
             </button>
           </div>
@@ -134,13 +126,18 @@
   const line1 = ref(null);
   const line2 = ref(null);
   const glowLine = ref(null);
-  
-  // استفاده از useRouter برای هدایت به صفحه لاگین
+
   const router = useRouter();
-  const goToLogin = () => {
-    router.push('/login');
-  };
+const goToLogin = () => {
+  router.push('/login');
+};
   
+
+
+
+
+
+
   onMounted(() => {
     setTimeout(() => {
       if (!line1.value || !line2.value || !glowLine.value) {

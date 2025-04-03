@@ -1,6 +1,6 @@
-<!-- pages/login.vue -->
+<!-- pages/dashboard.vue -->
 <template>
-  <div class="min-h-screen bg-gradient-to-r from-purple-900 to-blue-900 text-white flex items-center justify-center px-4">
+  <div class="min-h-screen bg-gradient-to-r from-purple-900 to-blue-900 text-white p-6">
     <!-- چارت پس‌زمینه با انیمیشن از چپ به راست -->
     <div class="absolute inset-0 opacity-20 pointer-events-none">
       <svg class="w-full h-full" viewBox="0 0 1200 400" preserveAspectRatio="none">
@@ -33,41 +33,35 @@
         />
       </svg>
     </div>
-    <div class="bg-black/50 p-6 md:p-8 rounded-lg shadow-lg max-w-md w-full">
-      <h2 class="text-2xl md:text-3xl font-bold text-center mb-6">Login to Your Account</h2>
-      <!-- دکمه ورود با گوگل -->
+
+    <header class="flex justify-between items-center mb-8">
+      <h1 class="text-2xl font-bold">Dashboard</h1>
       <button
-        @click="signInWithGoogle"
-        class="w-full flex items-center justify-center gap-2 px-4 py-3 mb-4 bg-white text-black rounded-full hover:bg-gray-200 transition shadow-lg"
+        @click="signOut"
+        class="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition"
       >
-        <svg class="w-5 h-5" viewBox="0 0 24 24">
-          <path
-            fill="currentColor"
-            d="M12.48 10.92v3.28h3.28c-.13 1.77-1.33 3.28-3.28 3.28-1.98 0-3.58-1.6-3.58-3.58s1.6-3.58 3.58-3.58c.89 0 1.72.32 2.36.86l2.36-2.36C15.68 7.32  Ascendingly 14.02 6.5c-3.31 0-6 2.69-6 6s2.69 6 6 6c3.07 0 5.58-2.29 5.98-5.28h-5.98z"
-          />
-        </svg>
-        Sign in with Google
+        Sign Out
       </button>
-      <!-- نمایش خطاها -->
-      <p v-if="error" class="text-red-500 text-sm mt-4 text-center">{{ error }}</p>
-    </div>
+    </header>
+
+    <main>
+      <h2 class="text-3xl font-bold mb-4">Welcome to Your Dashboard!</h2>
+      <p class="text-lg">
+        Here you can manage your trades, view analytics, and more.
+      </p>
+    </main>
   </div>
 </template>
+  
+  <script setup>
+  import { useRouter } from 'vue-router';
+  import { ref, onMounted } from 'vue';
+  import { auth } from '~/utils/firebase';
+  import { signOut as firebaseSignOut } from 'firebase/auth';
+  
+  const router = useRouter();
 
-<script setup>
-import { ref,onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { auth } from '~/utils/firebase';
-import {
-  signInWithPopup,
-  GoogleAuthProvider
-} from 'firebase/auth';
-
-// متغیرها
-const error = ref('');
-const router = useRouter();
-
-// رفرنس برای خطوط چارت
+  // رفرنس برای خطوط چارت
 const line1 = ref(null);
 const line2 = ref(null);
 const glowLine = ref(null);
@@ -113,24 +107,19 @@ onMounted(() => {
     animateLines();
   }, 100);
 });
-
-
-
-
-// ورود با گوگل
-const signInWithGoogle = async () => {
-  try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    console.log('User signed in:', result.user);
-    router.push('/dashboard'); // هدایت به داشبورد بعد از ورود
-  } catch (err) {
-    error.value = err.message;
-  }
-};
-</script>
-
-<style scoped>
+  
+  // تابع خروج
+  const signOut = async () => {
+    try {
+      await firebaseSignOut(auth);
+      router.push('/'); // هدایت به صفحه اصلی بعد از خروج
+    } catch (err) {
+      console.error('Error signing out:', err);
+    }
+  };
+  </script>
+  
+  <style scoped>
 
 /* انیمیشن هایلایت رنگی */
 .animate-glow {
@@ -145,5 +134,6 @@ const signInWithGoogle = async () => {
     opacity: 0.6;
   }
 }
-/* استایل‌های اضافی */
-</style>
+
+  /* استایل‌های اضافی اگه نیاز داری */
+  </style>

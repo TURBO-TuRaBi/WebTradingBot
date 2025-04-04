@@ -58,6 +58,11 @@
   import { ref, onMounted } from 'vue';
   import { auth } from '~/utils/firebase';
   import { signOut as firebaseSignOut } from 'firebase/auth';
+
+
+  definePageMeta({
+  middleware: 'auth'
+});
   
   const router = useRouter();
 

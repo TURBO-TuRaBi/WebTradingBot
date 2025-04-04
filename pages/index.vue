@@ -128,14 +128,16 @@
   const glowLine = ref(null);
 
   const router = useRouter();
+
+
 const goToLogin = () => {
-  router.push('/login');
+  if (auth.currentUser) {
+    router.push('/dashboard');
+  } else {
+    router.push('/login');
+  }
 };
   
-
-
-
-
 
 
   onMounted(() => {

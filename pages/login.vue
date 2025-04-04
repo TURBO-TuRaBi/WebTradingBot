@@ -43,7 +43,7 @@
         <svg class="w-5 h-5" viewBox="0 0 24 24">
           <path
             fill="currentColor"
-            d="M12.48 10.92v3.28h3.28c-.13 1.77-1.33 3.28-3.28 3.28-1.98 0-3.58-1.6-3.58-3.58s1.6-3.58 3.58-3.58c.89 0 1.72.32 2.36.86l2.36-2.36C15.68 7.32  Ascendingly 14.02 6.5c-3.31 0-6 2.69-6 6s2.69 6 6 6c3.07 0 5.58-2.29 5.98-5.28h-5.98z"
+            d="M12.48 10.92v3.28h3.28c-.13 1.77-1.33 3.28-3.28 3.28-1.98 0-3.58-1.6-3.58-3.58s1.6-3.58 3.58-3.58c.89 0 1.72.32 2.36.86l2.36-2.36C15.68 7.32 14.02 6.5 12.48 6.5c-3.31 0-6 2.69-6 6s2.69 6 6 6c3.07 0 5.58-2.29 5.98-5.28h-5.98z"
           />
         </svg>
         Sign in with Google
@@ -55,13 +55,10 @@
 </template>
 
 <script setup>
-import { ref,onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { auth } from '~/utils/firebase';
-import {
-  signInWithPopup,
-  GoogleAuthProvider
-} from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider, setPersistence, browserLocalPersistence } from 'firebase/auth';
 
 // متغیرها
 const error = ref('');
@@ -72,6 +69,22 @@ const line1 = ref(null);
 const line2 = ref(null);
 const glowLine = ref(null);
 
+// ورود با گوگل
+const signInWithGoogle = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    // تنظیم Persistence قبل از لاگین
+    await setPersistence(auth, browserLocalPersistence);
+    const result = await signInWithPopup(auth, provider);
+    console.log('User signed in:', result.user);
+    router.push('/dashboard');
+  } catch (err) {
+    error.value = err.message;
+    console.error('Login error:', err);
+  }
+};
+
+// انیمیشن‌ها
 onMounted(() => {
   setTimeout(() => {
     if (!line1.value || !line2.value || !glowLine.value) {
@@ -79,25 +92,24 @@ onMounted(() => {
       return;
     }
 
-    // انیمیشن از چپ به راست
     const animateLines = () => {
       let offset = 0;
       const basePoints1 = "0,300 200,200 400,350 600,150 800,300 1000,100 1200,250".split(' ');
       const basePoints2 = "0,350 200,250 400,400 600,200 800,350 1000,150 1200,300".split(' ');
 
       const animate = () => {
-        offset += 2; // سرعت حرکت افقی
+        offset += 2;
         const newPoints1 = basePoints1.map((point, index) => {
           const [x, y] = point.split(',');
-          const newX = (parseFloat(x) - offset) % 1200; // حرکت افقی
-          const newY = parseFloat(y) + Math.sin((index + offset * 0.01) * 0.5) * 10; // موج عمودی
+          const newX = (parseFloat(x) - offset) % 1200;
+          const newY = parseFloat(y) + Math.sin((index + offset * 0.01) * 0.5) * 10;
           return `${newX < 0 ? newX + 1200 : newX},${newY}`;
         }).join(' ');
 
         const newPoints2 = basePoints2.map((point, index) => {
           const [x, y] = point.split(',');
-          const newX = (parseFloat(x) - offset) % 1200; // حرکت افقی
-          const newY = parseFloat(y) + Math.cos((index + offset * 0.01) * 0.5) * 10; // موج عمودی
+          const newX = (parseFloat(x) - offset) % 1200;
+          const newY = parseFloat(y) + Math.cos((index + offset * 0.01) * 0.5) * 10;
           return `${newX < 0 ? newX + 1200 : newX},${newY}`;
         }).join(' ');
 
@@ -113,26 +125,9 @@ onMounted(() => {
     animateLines();
   }, 100);
 });
-
-
-
-
-// ورود با گوگل
-const signInWithGoogle = async () => {
-  try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    console.log('User signed in:', result.user);
-    router.push('/dashboard'); // هدایت به داشبورد بعد از ورود
-  } catch (err) {
-    error.value = err.message;
-  }
-};
 </script>
 
 <style scoped>
-
-/* انیمیشن هایلایت رنگی */
 .animate-glow {
   animation: glow 3s infinite ease-in-out;
 }
@@ -145,5 +140,4 @@ const signInWithGoogle = async () => {
     opacity: 0.6;
   }
 }
-/* استایل‌های اضافی */
 </style>
